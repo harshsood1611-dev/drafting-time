@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Download, Search, Filter, Star, Calendar, Tag, CreditCard, Crown, AlertTriangle, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useSupabaseDrafts as useDrafts } from '../../hooks/useSupabaseDrafts';
+import { useSupabaseDrafts } from '../../hooks/useSupabaseDrafts';
 import { Draft } from '../../types';
-import { supabase } from '../../lib/supabase';
 
 declare global {
   interface Window {
@@ -13,7 +12,7 @@ declare global {
 
 const UserDashboard: React.FC = () => {
   const { user, updateUser } = useAuth();
-  const { getPublishedDrafts, recordDownload } = useDrafts();
+  const { getPublishedDrafts, recordDownload } = useSupabaseDrafts();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showPaymentModal, setShowPaymentModal] = useState(false);

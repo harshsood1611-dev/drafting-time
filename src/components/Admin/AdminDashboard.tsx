@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Eye, EyeOff, Upload, FileText, Users, Download } from 'lucide-react';
-import { useSupabaseDrafts as useDrafts } from '../../hooks/useSupabaseDrafts';
+import { useSupabaseDrafts } from '../../hooks/useSupabaseDrafts';
 import { Draft } from '../../types';
 import DraftForm from './DraftForm';
 
 const AdminDashboard: React.FC = () => {
-  const { drafts, addDraft, updateDraft, deleteDraft } = useDrafts();
+  const { drafts, addDraft, updateDraft, deleteDraft } = useSupabaseDrafts();
   const [showForm, setShowForm] = useState(false);
   const [editingDraft, setEditingDraft] = useState<Draft | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);

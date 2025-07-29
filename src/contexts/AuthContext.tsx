@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { AuthContextType } from '../types';
-import { useSupabaseAuth as useAuthImplementation } from '../hooks/useSupabaseAuth';
+import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -17,7 +17,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const auth = useAuthImplementation();
+  const auth = useSupabaseAuth();
 
   return (
     <AuthContext.Provider value={auth}>

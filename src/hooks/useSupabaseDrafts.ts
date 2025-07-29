@@ -21,11 +21,15 @@ export const useSupabaseDrafts = () => {
     tags: dbDraft.tags || [],
     downloadCount: dbDraft.download_count,
     isPublished: dbDraft.is_published,
-    createdBy: dbDraft.created_by
+    createdBy: dbDraft.created_by,
+    fileContent: dbDraft.file_content,
+    fileType: dbDraft.file_type
   });
 
   const fetchDrafts = async () => {
     try {
+      console.log('Fetching drafts from Supabase...');
+      
       const { data, error } = await supabase
         .from('drafts')
         .select('*')
@@ -37,6 +41,7 @@ export const useSupabaseDrafts = () => {
       }
 
       if (data) {
+        console.log('Drafts fetched successfully:', data.length, 'drafts');
         setDrafts(data.map(mapDatabaseDraftToDraft));
       }
     } catch (error) {
@@ -48,6 +53,8 @@ export const useSupabaseDrafts = () => {
 
   const addDraft = async (draft: Omit<Draft, 'id'>) => {
     try {
+      console.log('Adding new draft:', draft.title);
+      
       const { data, error } = await supabase
         .from('drafts')
         .insert({
@@ -71,6 +78,7 @@ export const useSupabaseDrafts = () => {
       }
 
       if (data) {
+        console.log('Draft added successfully:', data.title);
         const newDraft = mapDatabaseDraftToDraft(data);
         setDrafts(prev => [newDraft, ...prev]);
         return newDraft;
@@ -83,6 +91,8 @@ export const useSupabaseDrafts = () => {
 
   const updateDraft = async (id: string, updates: Partial<Draft>) => {
     try {
+      console.log('Updating draft:', id);
+      
       const dbUpdates: any = {};
       
       if (updates.title !== undefined) dbUpdates.title = updates.title;
@@ -107,6 +117,7 @@ export const useSupabaseDrafts = () => {
       }
 
       if (data) {
+        console.log('Draft updated successfully:', data.title);
         const updatedDraft = mapDatabaseDraftToDraft(data);
         setDrafts(prev => prev.map(draft => 
           draft.id === id ? updatedDraft : draft
@@ -119,6 +130,8 @@ export const useSupabaseDrafts = () => {
 
   const deleteDraft = async (id: string) => {
     try {
+      console.log('Deleting draft:', id);
+      
       const { error } = await supabase
         .from('drafts')
         .delete()
@@ -129,6 +142,7 @@ export const useSupabaseDrafts = () => {
         return;
       }
 
+      console.log('Draft deleted successfully');
       setDrafts(prev => prev.filter(draft => draft.id !== id));
     } catch (error) {
       console.error('Error deleting draft:', error);
@@ -141,6 +155,8 @@ export const useSupabaseDrafts = () => {
 
   const recordDownload = async (userId: string, draftId: string) => {
     try {
+      console.log('Recording download for user:', userId, 'draft:', draftId);
+      
       // Record the download
       const { error: downloadError } = await supabase
         .from('downloads')
@@ -163,15 +179,19 @@ export const useSupabaseDrafts = () => {
           .eq('id', draftId);
 
         if (!updateError) {
+          console.log('Draft download count updated');
           // Update local state
           setDrafts(prev => prev.map(draft => 
             draft.id === draftId 
               ? { ...draft, downloadCount: draft.downloadCount + 1 }
               : draft
           ));
+        } else {
+          console.error('Error updating draft download count:', updateError);
         }
       }
 
+      console.log('Download recorded successfully');
       return true;
     } catch (error) {
       console.error('Error recording download:', error);
